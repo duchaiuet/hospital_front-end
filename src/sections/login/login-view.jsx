@@ -1,5 +1,4 @@
-import { gapi, google } from 'gapi-script';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -21,11 +20,12 @@ import { bgGradient } from 'src/theme/css';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
+import LoginComponent from './loginGoogle';
+
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
   const theme = useTheme();
-
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -34,39 +34,12 @@ export default function LoginView() {
     router.push('/dashboard');
   };
 
-  const [googleClient, setGoogleClient] = useState < google.accounts.oauth2.OAuth2Client > null;
+  const logoutUrl =
+    'https://accounts.google.com/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:3030';
 
-  const initGoogleClient = useCallback(() => {
-    const client = google.accounts.oauth2.initCodeClient({
-      client_id: '447499911959-09kgl3k46d3094ku9e0aikfo09ueiclu.apps.googleusercontent.com',
-      scope: 'https://www.googleapis.com/auth/userinfo.email',
-      ux_mode: 'popup',
-      callback: (response) => {
-        if (response.error) {
-          console.error('Login Failed:', response.error);
-        } else {
-          // Handle the successful login response here
-          console.log('Login Success:', response);
-        }
-      },
-    });
-
-    setGoogleClient(client);
-  }, [googleClient, setGoogleClient]);
-
-  const handleGoogleLogin = useCallback(() => {
-    if (googleClient) {
-      googleClient.requestAccessToken();
-    }
-  }, [googleClient]);
-
-  useEffect(() => {
-    const initClient = () => {
-      gapi.load('client:auth2', initGoogleClient);
-    };
-
-    gapi.load('client:auth2', initClient);
-  }, [initGoogleClient]);
+  const handleLogout = () => {
+    window.location.href = logoutUrl;
+  };
 
   const renderForm = (
     <>
@@ -146,14 +119,15 @@ export default function LoginView() {
             </Typography>
           </Divider>
 
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={2} alignItems="center" flex={1}>
+            <LoginComponent />
             <Button
               fullWidth
               size="large"
               color="inherit"
               variant="outlined"
               sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-              onClick={handleGoogleLogin}
+              onClick={handleLogout}
             >
               <Iconify icon="eva:google-fill" color="#DF3E30" />
             </Button>
