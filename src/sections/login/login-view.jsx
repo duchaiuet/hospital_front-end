@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -20,7 +19,7 @@ import { bgGradient } from 'src/theme/css';
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 
-import LoginComponent from './loginGoogle';
+import LoginGoogelComponent from './loginGoogle';
 
 // ----------------------------------------------------------------------
 
@@ -33,14 +32,6 @@ export default function LoginView() {
   const handleClick = () => {
     router.push('/dashboard');
   };
-
-  const logoutUrl =
-    'https://accounts.google.com/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:3030';
-
-  const handleLogout = () => {
-    window.location.href = logoutUrl;
-  };
-
   const renderForm = (
     <>
       <Stack spacing={3}>
@@ -120,17 +111,7 @@ export default function LoginView() {
           </Divider>
 
           <Stack direction="row" spacing={2} alignItems="center" flex={1}>
-            <LoginComponent />
-            <Button
-              fullWidth
-              size="large"
-              color="inherit"
-              variant="outlined"
-              sx={{ borderColor: alpha(theme.palette.grey[500], 0.16) }}
-              onClick={handleLogout}
-            >
-              <Iconify icon="eva:google-fill" color="#DF3E30" />
-            </Button>
+            <LoginGoogelComponent />
           </Stack>
         </Card>
       </Stack>
