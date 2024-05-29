@@ -1,15 +1,23 @@
+import React from 'react';
 import { jwtDecode } from 'jwt-decode';
-import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+
+import { getUserByEmail } from 'src/api/login';
+
 
 const clientId = '447499911959-09kgl3k46d3094ku9e0aikfo09ueiclu.apps.googleusercontent.com';
 
 const LoginGoogelComponent = () => {
-  const [key, setKey] = useState(0);
+  const navigate = useNavigate();
   const onSuccess = async (response) => {
     const decoded = jwtDecode(response.credential);
-    console.log('decoded: ', decoded);
-    setKey((prevKey) => prevKey + 1);
+    const user = await getUserByEmail(decoded.email, decoded.sub)
+
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/');
+    }
   };
 
   const onError = (error) => {
@@ -19,7 +27,6 @@ const LoginGoogelComponent = () => {
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <GoogleLogin
-        key={key}
         clientId={clientId}
         buttonText="Login with Google"
         onSuccess={onSuccess}

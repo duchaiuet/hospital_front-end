@@ -6,10 +6,17 @@ import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import ThemeProvider from 'src/theme';
 import PropTypes from 'prop-types'; // Import PropTypes
-import { AppView } from './sections/overview/view';
-import LoginPage from './pages/login';
-import NotFoundPage from './pages/page-not-found';
+import { lazy, Suspense } from 'react';
+import DashboardLayout from './layouts/dashboard';
 // ----------------------------------------------------------------------
+
+export const IndexPage = lazy(() => import('src/pages/app'));
+export const BlogPage = lazy(() => import('src/pages/blog'));
+export const UserPage = lazy(() => import('src/pages/user'));
+export const LoginPage = lazy(() => import('src/pages/login'));
+export const ProductsPage = lazy(() => import('src/pages/products'));
+export const Page404 = lazy(() => import('src/pages/page-not-found'));
+
 
 PrivateRoute.propTypes = {
   children: PropTypes.node.isRequired, // Defining prop types for children
@@ -41,7 +48,34 @@ export default function App() {
           path="/"
           element={
             <PrivateRoute>
-              <AppView />
+              <DashboardLayout>
+                <IndexPage/>
+              </DashboardLayout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <Suspense>
+                  <UserPage/>
+                </Suspense>
+              </DashboardLayout>
+              
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <PrivateRoute>
+              <DashboardLayout>
+                <Suspense>
+                  <ProductsPage/>
+                </Suspense>
+              </DashboardLayout>
             </PrivateRoute>
           }
         />
@@ -57,7 +91,7 @@ export default function App() {
           path="/*"
           element={
             <PublicRoute>
-              <NotFoundPage />
+              <Page404 />
             </PublicRoute>
           }
         />
