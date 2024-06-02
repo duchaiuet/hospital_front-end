@@ -6,7 +6,7 @@ import { Excalidraw, exportToCanvas } from '@excalidraw/excalidraw';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
-import TextField from '@mui/material/TextField';
+// import TextField from '@mui/material/TextField';
 
 // ----------------------------------------------------------------------
 
@@ -23,18 +23,18 @@ function base64ToArrayBuffer(base64) {
 export default function AppView() {
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
 
-  const [name, setName] = useState('');
-  const [birth, setBirth] = useState('');
-  const [sex, setSex] = useState('');
-  const [address, setAddress] = useState('');
-  const [room, setRoom] = useState('');
-  const [bed, setBed] = useState('');
-  const [hos, setHos] = useState('');
+  // const [name, setName] = useState('');
+  // const [birth, setBirth] = useState('');
+  // const [sex, setSex] = useState('');
+  // const [address, setAddress] = useState('');
+  // const [room, setRoom] = useState('');
+  // const [bed, setBed] = useState('');
+  // const [hos, setHos] = useState('');
 
   return (
     <Container maxWidth="xl">
       <Grid container spacing={2}>
-        <Grid container spacing={{ xs: 2, md: 4 }} direction="column">
+        {/* <Grid container spacing={{ xs: 2, md: 4 }} direction="column">
           <TextField
             label="Họ và tên "
             name="name"
@@ -104,7 +104,7 @@ export default function AppView() {
               }}
             />
           </Grid>
-        </Grid>
+        </Grid> */}
         <Grid xs={12} md={6} lg={4}>
           <Button
             onClick={async () => {
@@ -133,43 +133,43 @@ export default function AppView() {
               formData.append('file', file);
 
               /* eslint-disable prefer-template */
-              await fetch(
-                'http://localhost:3000/?name=' +
-                  name +
-                  '&hospital=' +
-                  hos +
-                  '&bed=' +
-                  bed +
-                  '&address=' +
-                  address +
-                  '&birthday=' +
-                  birth +
-                  '&sex=' +
-                  sex,
-                {
-                  method: 'POST',
-                  body: formData,
-                }
-              )
-                .then((response) => {
-                  if (response.ok) {
-                    return response.blob();
-                  }
-                  throw new Error(`File download failed with status code: ${response.status}`);
-                })
-                .then((blob) => {
-                  const fileUrl = URL.createObjectURL(blob);
-                  const link = document.createElement('a');
-                  link.href = fileUrl;
-                  link.download = 'downloaded_file.pdf'; // Set the desired file name with .pdf extension
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                  URL.revokeObjectURL(fileUrl);
-                })
-                .catch((error) => {
-                  console.error('Error:', error);
-                });
+              // await fetch(
+              //   'http://localhost:3000/?name=' +
+              //     name +
+              //     '&hospital=' +
+              //     hos +
+              //     '&bed=' +
+              //     bed +
+              //     '&address=' +
+              //     address +
+              //     '&birthday=' +
+              //     birth +
+              //     '&sex=' +
+              //     sex,
+              //   {
+              //     method: 'POST',
+              //     body: formData,
+              //   }
+              // )
+              //   .then((response) => {
+              //     if (response.ok) {
+              //       return response.blob();
+              //     }
+              //     throw new Error(`File download failed with status code: ${response.status}`);
+              //   })
+              //   .then((blob) => {
+              //     const fileUrl = URL.createObjectURL(blob);
+              //     const link = document.createElement('a');
+              //     link.href = fileUrl;
+              //     link.download = 'downloaded_file.pdf'; // Set the desired file name with .pdf extension
+              //     document.body.appendChild(link);
+              //     link.click();
+              //     document.body.removeChild(link);
+              //     URL.revokeObjectURL(fileUrl);
+              //   })
+              //   .catch((error) => {
+              //     console.error('Error:', error);
+              //   });
             }}
           >
             Export
