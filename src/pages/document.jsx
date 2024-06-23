@@ -1,18 +1,16 @@
 import { Helmet } from 'react-helmet-async';
 
-// import { AppView } from 'src/sections/overview/view';
 import DocumentForm from 'src/sections/document/form';
 
 // ----------------------------------------------------------------------
 
-export default function AppPage() {
+export default function DocumentPage() {
   return (
     <>
       <Helmet>
         <title> Document</title>
       </Helmet>
 
-      {/* <AppView /> */}
       <DocumentForm />
     </>
   );
