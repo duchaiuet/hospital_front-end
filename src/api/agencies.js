@@ -1,6 +1,6 @@
 export const fetchAgencies = async () => {
   try {
-    const response = await fetch(`${process.env.REACT_APP_BASE_URL}/doc-class`, {
+    const response = await fetch(`${process.env.REACT_APP_BASE_URL}/agency`, {
       method: 'GET',
       headers: {
         Accept: '*/*',

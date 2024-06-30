@@ -1,73 +1,490 @@
+// import React, { useState, useEffect } from 'react';
+
+// import { styled } from '@mui/system';
+// import { grey, green } from '@mui/material/colors';
+// import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+// import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+// import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+// import {
+//   Grid,
+//   List,
+//   Table,
+//   Paper,
+//   Stack,
+//   Button,
+//   Checkbox,
+//   TableRow,
+//   ListItem,
+//   TableBody,
+//   TableCell,
+//   TextField,
+//   FormLabel,
+//   TableHead,
+//   Typography,
+//   IconButton,
+//   FormControl,
+//   ListItemText,
+//   TableContainer,
+//   ListItemButton,
+//   FormControlLabel,
+// } from '@mui/material';
+
+// import Categories from './category';
+// import { fetchAgencies } from '../../api/agencies';
+// import { createDocument } from '../../api/document';
+// import { fetchDocClasses } from '../../api/docclass';
+// import FileUploadModal from '../../components/modal/uploadFile';
+
+// // ----------------------------------------------------------------------
+
+// const StyledList = styled(List)({
+//   maxHeight: 300,
+//   minHeight: 100,
+//   overflow: 'auto',
+//   border: '1px solid #ccc',
+//   borderRadius: '4px',
+//   marginTop: '8px',
+// });
+
+// const DocumentForm = () => {
+//   const [formData, setFormData] = React.useState({
+//     documentCode: '',
+//     issueDate: '',
+//     effecteddate: '',
+//     doctypeid: '',
+//     signer: '',
+//     signerposition: '',
+//     files: [],
+//     pagecount: 0,
+//     agencyids: [],
+//     categoryids: [],
+//     abstract: '',
+//   });
+
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const handleOpen = () => setIsModalOpen(true);
+//   const handleClose = () => setIsModalOpen(false);
+//   const [documentTypes, setDocumentTypes] = useState([]);
+//   const [agencyFields, setAgencyFields] = useState([]);
+
+//   const [documentCode, setDocumentCode] = useState('');
+//   const [issueDate, setIssueDate] = useState('');
+//   const [effecteddate, setEffecteddate] = useState('');
+//   const [docTypeId, setdocTypeId] = useState('');
+//   const [signer, setSigner] = useState('');
+//   const [signerPosition, setSignerPosition] = useState('');
+//   const [selectedFiles, setSelectedFiles] = useState([]);
+//   const [agencyIDs, setAgencyIDs] = useState([]);
+//   const [totalPage, setTotalPage] = useState(0);
+
+//   // const handleSwapUp = (index) => {
+//   //   if (index > 0) {
+//   //     const newFiles = [...selectedFiles];
+//   //     [newFiles[index - 1], newFiles[index]] = [newFiles[index], newFiles[index - 1]];
+//   //     setSelectedFiles(newFiles);
+//   //   }
+//   // };
+
+//   // const handleSwapDown = (index) => {
+//   //   if (index < formData.files.length - 1) {
+//   //     const newFiles = [...selectedFiles];
+//   //     [newFiles[index + 1], newFiles[index]] = [newFiles[index], newFiles[index + 1]];
+//   //     setSelectedFiles(newFiles);
+//   //   }
+//   // };
+
+//   // const handleRemoveFile = (index) => {
+//   //   const newFiles = formData.files.filter((_, i) => i !== index);
+//   //   setFormData((prevData) => ({ ...prevData, files: newFiles }));
+//   // };
+
+//   const handleCloseWithSelectedFiles = (files) => {
+//     const countPage = files.reduce((total, file) => total + (file.pagecount || 0), 0);
+
+//     setTotalPage(countPage);
+//     setSelectedFiles(files);
+//     handleClose();
+//   };
+
+//   const handleAgencyChange = (newSelectedCategories) => {};
+
+//   const handleCategoryChange = (event, field) => {
+//     setFormData((prevData) => {
+//       const updatedCategories = event.target.checked
+//         ? [...prevData.categoryids, field.id]
+//         : prevData.categoryids.filter((id) => id !== field.id);
+
+//       return { ...prevData, categoryids: updatedCategories };
+//     });
+//   };
+
+//   const handleCreateDocument = async () => {
+//     await createDocument(formData);
+//   };
+
+//   const fetchDataDocumentType = async () => {
+//     const data = await fetchDocClasses();
+//     setDocumentTypes(data);
+//   };
+
+//   const fetchDataAgency = async () => {
+//     const data = await fetchAgencies();
+//     setAgencyFields(data);
+//   };
+
+//   useEffect(() => {
+//     fetchDataDocumentType();
+//   }, []);
+
+//   useEffect(() => {
+//     fetchDataAgency();
+//   }, []);
+
+//   return (
+//     <div style={{ display: 'flex', flexDirection: 'column', margin: '20px' }}>
+//       {/* Phần Thông Tin Văn Bản */}
+//       <Typography variant="h5" gutterBottom>
+//         Thông tin văn bản
+//       </Typography>
+//       <Grid container spacing={2}>
+//         <Grid item xs={6}>
+//           <Grid container spacing={2}>
+//             <Grid item xs={4}>
+//               <Typography alignContent="center" fontSize={14} color={grey[500]}>
+//                 Số ký hiệu văn bản
+//               </Typography>
+//               <Grid item marginTop={1}>
+//                 <TextField
+//                   variant="outlined"
+//                   fullWidth
+//                   value={documentCode}
+//                   onChange={(e) => {
+//                     setDocumentCode(e.target.value);
+//                   }}
+//                 />
+//               </Grid>
+//             </Grid>
+//             <Grid item xs={4}>
+//               <Typography alignContent="center" fontSize={14} color={grey[500]}>
+//                 Ngày ban hành
+//               </Typography>
+//               <Grid item marginTop={1}>
+//                 <TextField
+//                   variant="outlined"
+//                   type="date"
+//                   InputLabelProps={{ shrink: true }}
+//                   fullWidth
+//                   value={issueDate}
+//                   onChange={(e) => {
+//                     setIssueDate(e.target.value);
+//                   }}
+//                 />
+//               </Grid>
+//             </Grid>
+
+//             <Grid item xs={4}>
+//               <Typography alignContent="center" fontSize={14} color={grey[500]}>
+//                 Ngày bắt đầu có hiệu lực
+//               </Typography>
+//               <Grid item marginTop={1}>
+//                 <TextField
+//                   variant="outlined"
+//                   type="date"
+//                   InputLabelProps={{ shrink: true }}
+//                   fullWidth
+//                   value={effecteddate}
+//                   onChange={(e) => {
+//                     setEffecteddate(e.target.value);
+//                   }}
+//                 />
+//               </Grid>
+//             </Grid>
+//           </Grid>
+
+//           <Grid container spacing={2} mt={2}>
+//             <Grid item xs={8}>
+//               <div style={{ display: 'flex', gap: '10px' }}>
+//                 <Typography
+//                   alignContent="center"
+//                   variant="subtitle1"
+//                   fontSize={14}
+//                   color={green[500]}
+//                 >
+//                   Cơ quan ban hành*
+//                 </Typography>
+//                 <Typography alignContent="center" fontSize={14} color={grey[500]}>
+//                   (chọn 1 hoặc nhiều cơ quan ban hành)
+//                 </Typography>
+//               </div>
+
+//               <Grid
+//                 container
+//                 paddingX={2}
+//                 marginTop={1}
+//                 border={1}
+//                 borderRadius={1}
+//                 borderColor={grey[300]}
+//                 minHeight={100}
+//                 maxHeight={300}
+//                 overflow="auto"
+//               >
+//                 {agencyFields.map((field, index) => (
+//                   <Grid item xs={12} key={field.id}>
+//                     <FormControlLabel
+//                       control={
+//                         <Checkbox
+//                           checked={agencyIDs.includes(field.id)}
+//                           onChange={(e) => handleAgencyChange(e, field.id)}
+//                         />
+//                       }
+//                       label={field.name}
+//                     />
+//                   </Grid>
+//                 ))}
+//               </Grid>
+//             </Grid>
+
+//             {/* <Grid item xs={4}>
+//               <Typography
+//                 alignContent="center"
+//                 variant="subtitle1"
+//                 fontSize={14}
+//                 color={green[500]}
+//               >
+//                 Loại văn bản*
+//               </Typography>
+//               <StyledList>
+//                 {documentTypes.map((type) => (
+//                   <ListItem key={type.id} disablePadding>
+//                     <ListItemButton
+//                       classes={{ color: 'rgb(1, 202, 202)' }}
+//                       selected={docTypeId === type.id}
+//                       onClick={() => setdocTypeId(type.id)}
+//                     >
+//                       <ListItemText primary={type.name} />
+//                     </ListItemButton>
+//                   </ListItem>
+//                 ))}
+//               </StyledList>
+//             </Grid> */}
+//           </Grid>
+
+//           <Grid container spacing={2} mt={2}>
+//             <Grid item xs={6}>
+//               <Typography alignContent="center" fontSize={14} color={grey[500]}>
+//                 Người ký văn bản
+//               </Typography>
+//               <FormControl fullWidth>
+//                 <TextField
+//                   id="outlined-basic"
+//                   label=""
+//                   variant="outlined"
+//                   value={formData.signer}
+//                   onChange={(e) => {
+//                     setFormData((prevData) => ({
+//                       ...prevData,
+//                       signer: e.target.value,
+//                     }));
+//                   }}
+//                 />
+//               </FormControl>
+//             </Grid>
+//             <Grid item xs={6}>
+//               <Typography alignContent="center" fontSize={14} color={grey[500]}>
+//                 Chức vụ
+//               </Typography>
+//               <FormControl fullWidth>
+//                 <TextField
+//                   id="outlined-basic"
+//                   variant="outlined"
+//                   value={formData.signerposition}
+//                   onChange={(e) => {
+//                     setFormData((prevData) => ({
+//                       ...prevData,
+//                       signerposition: e.target.value,
+//                     }));
+//                   }}
+//                 />
+//               </FormControl>
+//             </Grid>
+//           </Grid>
+
+//           <Grid container spacing={2} mt={2}>
+//             <Grid item xs={12}>
+//               <FormLabel>Trích yếu</FormLabel>
+//               <TextField
+//                 fullWidth
+//                 multiline
+//                 rows={5}
+//                 value={formData.abstract}
+//                 onChange={(e) => {
+//                   setFormData((prevData) => ({
+//                     ...prevData,
+//                     abstract: e.target.value,
+//                   }));
+//                 }}
+//               />
+//             </Grid>
+//           </Grid>
+
+//           <Grid container spacing={2} mt={2} paddingX={2}>
+//             <Stack spacing={{ xs: 1, sm: 2 }} direction="row" useFlexGap flexWrap="wrap">
+//               <Button variant="contained" color="success" onClick={handleCreateDocument}>
+//                 Chấp nhận
+//               </Button>
+//               <Button variant="contained" color="inherit">
+//                 Bỏ qua
+//               </Button>
+//             </Stack>
+//           </Grid>
+//         </Grid>
+
+//         <Grid item xs={6}>
+//           <Categories onCategoriesChange={handleAgencyChange} />
+
+//           <Grid container marginTop={1} gap={2}>
+//             <div style={{ flex: 2, flexDirection: 'column' }}>
+//               <div
+//                 style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px' }}
+//               >
+//                 <Typography variant="subtitle1" gutterBottom>
+//                   File văn bản
+//                 </Typography>
+//                 <Typography variant="subtitle1" gutterBottom>
+//                   Tổng số trang: {formData?.pagecount || 0}
+//                 </Typography>
+//               </div>
+//               <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+//                 <Table stickyHeader>
+//                   <TableHead>
+//                     <TableRow>
+//                       <TableCell>#</TableCell>
+//                       <TableCell>Tên file</TableCell>
+//                       <TableCell>Loại file</TableCell>
+//                       <TableCell>Số trang</TableCell>
+//                       <TableCell> </TableCell>
+//                     </TableRow>
+//                   </TableHead>
+//                   <TableBody>
+//                     {formData.files?.map((file, index) => (
+//                       <TableRow key={file.id}>
+//                         <TableCell>{index + 1}</TableCell>
+//                         <TableCell>{file.name}</TableCell>
+//                         <TableCell>{file.filetype}</TableCell>
+//                         <TableCell>{file.pagecount}</TableCell>
+//                         <TableCell>
+//                           <IconButton
+//                             variant="text"
+//                             color="error"
+//                             // onClick={() => handleRemoveFile(index)}
+//                           >
+//                             <ClearOutlinedIcon />
+//                           </IconButton>
+//                           <IconButton
+//                             variant="text"
+//                             color="info"
+//                             // onClick={() => handleSwapUp(index)}
+//                           >
+//                             <ArrowUpwardIcon />
+//                           </IconButton>
+//                           <IconButton
+//                             variant="text"
+//                             color="info"
+//                             // onClick={() => handleSwapDown(index)}
+//                           >
+//                             <ArrowDownwardIcon />
+//                           </IconButton>
+//                         </TableCell>
+//                       </TableRow>
+//                     ))}
+//                   </TableBody>
+//                 </Table>
+//               </TableContainer>
+//               <Stack direction="row" spacing={2} marginTop={2}>
+//                 <Button variant="contained" onClick={handleOpen} color="success">
+//                   Chọn file
+//                 </Button>
+//                 <Button variant="contained" color="success">
+//                   Xem nội dung file
+//                 </Button>
+//               </Stack>
+//             </div>
+//           </Grid>
+//         </Grid>
+//       </Grid>
+
+//       <FileUploadModal
+//         open={isModalOpen}
+//         handleClose={handleClose}
+//         onCloseWithSelectedFiles={handleCloseWithSelectedFiles}
+//       />
+//     </div>
+//   );
+// };
+// export default DocumentForm;
+
 import React, { useState, useEffect } from 'react';
 
-import { styled } from '@mui/system';
-import { grey, green } from '@mui/material/colors';
-import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
-import UnfoldMoreOutlinedIcon from '@mui/icons-material/UnfoldMoreOutlined';
-import {
-  Grid,
-  List,
-  Table,
-  Paper,
-  Stack,
-  Button,
-  Checkbox,
-  TableRow,
-  ListItem,
-  TableBody,
-  TableCell,
-  TextField,
-  FormLabel,
-  TableHead,
-  Typography,
-  IconButton,
-  FormControl,
-  ListItemText,
-  TableContainer,
-  ListItemButton,
-  FormControlLabel,
-} from '@mui/material';
+import { grey } from '@mui/material/colors';
+import { Grid, Stack, Button, TextField, FormLabel, Typography, FormControl } from '@mui/material';
 
+import Categories from './category';
+import FileUpload from './fileUpload';
+import AgencySelector from './agency';
+import DocumentDetails from './documentDetail';
 import { fetchAgencies } from '../../api/agencies';
+import { createDocument } from '../../api/document';
 import { fetchDocClasses } from '../../api/docclass';
-import { fetchCategories } from '../../api/categories';
-
-// ----------------------------------------------------------------------
-
-const StyledList = styled(List)({
-  maxHeight: 300,
-  minHeight: 100,
-  overflow: 'auto',
-  border: '1px solid #ccc',
-  borderRadius: '4px',
-  marginTop: '8px',
-});
+import FileUploadModal from '../../components/modal/uploadFile';
 
 const DocumentForm = () => {
-  const [formData, setFormData] = React.useState({
-    documentNumber: '',
-    issueDate: null,
-    effectiveDate: null,
-    issuingAuthority: [],
-    documentType: '',
-    fields: [],
+  const [formData, setFormData] = useState({
+    documentCode: '',
+    issueDate: '',
+    effecteddate: '',
+    doctypeid: '',
     signer: '',
-    position: '',
-    summary: '',
+    signerposition: '',
     files: [],
+    pagecount: 0,
+    agencyids: [],
+    categoryids: [],
+    abstract: '',
   });
 
-  const handleListItemClick = (value) => {
-    setFormData((prevData) => ({ ...prevData, documentType: value }));
-  };
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpen = () => setIsModalOpen(true);
+  const handleClose = () => setIsModalOpen(false);
   const [documentTypes, setDocumentTypes] = useState([]);
   const [agencyFields, setAgencyFields] = useState([]);
-  const [categoryFields, setCategoryFields] = useState([]);
-  const [issueDate, setIssueDate] = useState('');
-  const [effecteddate, setEffecteddate] = useState('');
-  const [documentCode, setDocumentCode] = useState('');
-  const [countPage, setCountPage] = useState(0);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [totalPage, setTotalPage] = useState(0);
+
+  const handleInputChange = (key, value) => {
+    setFormData((prevData) => ({ ...prevData, [key]: value }));
+  };
+
+  const handleCloseWithSelectedFiles = (files) => {
+    const countPage = files.reduce((total, file) => total + (file.pagecount || 0), 0);
+    setTotalPage(countPage);
+    setSelectedFiles(files);
+    handleClose();
+  };
+
+  const handleAgencyChange = (event, id) => {
+    const updatedAgencyIds = event.target.checked
+      ? [...formData.agencyids, id]
+      : formData.agencyids.filter((agencyId) => agencyId !== id);
+    setFormData((prevData) => ({ ...prevData, agencyids: updatedAgencyIds }));
+  };
+
+  const handleCategoryChange = (newSelectedCategories) => {
+    setFormData((prevData) => ({ ...prevData, categoryids: newSelectedCategories }));
+  };
+
+  const handleCreateDocument = async () => {
+    await createDocument(formData);
+  };
 
   const fetchDataDocumentType = async () => {
     const data = await fetchDocClasses();
@@ -79,11 +496,6 @@ const DocumentForm = () => {
     setAgencyFields(data);
   };
 
-  const fetchDataCategories = async () => {
-    const data = await fetchCategories();
-    setCategoryFields(data);
-  };
-
   useEffect(() => {
     fetchDataDocumentType();
   }, []);
@@ -92,140 +504,49 @@ const DocumentForm = () => {
     fetchDataAgency();
   }, []);
 
-  useEffect(() => {
-    fetchDataCategories();
-  }, []);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', margin: '20px' }}>
-      {/* Phần Thông Tin Văn Bản */}
       <Typography variant="h5" gutterBottom>
         Thông tin văn bản
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <Grid container spacing={2}>
-            <Grid item xs={4}>
-              <Typography alignContent="center" fontSize={14} color={grey[500]}>
-                Số ký hiệu văn bản
-              </Typography>
-              <Grid item marginTop={1}>
-                <TextField
-                  variant="outlined"
-                  fullWidth
-                  value={documentCode}
-                  onChange={(e) => {
-                    setDocumentCode(e.target.value);
-                  }}
-                />
-              </Grid>
-            </Grid>
-            <Grid item xs={4}>
-              <Typography alignContent="center" fontSize={14} color={grey[500]}>
-                Ngày ban hành
-              </Typography>
-              <Grid item marginTop={1}>
-                <TextField
-                  variant="outlined"
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
-                  fullWidth
-                  value={issueDate}
-                  onChange={(e) => {
-                    setIssueDate(e.target.value);
-                  }}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid item xs={4}>
-              <Typography alignContent="center" fontSize={14} color={grey[500]}>
-                Ngày bắt đầu có hiệu lực
-              </Typography>
-              <Grid item marginTop={1}>
-                <TextField
-                  variant="outlined"
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
-                  fullWidth
-                  value={effecteddate}
-                  onChange={(e) => {
-                    setEffecteddate(e.target.value);
-                  }}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid container spacing={2} mt={2}>
-            <Grid item xs={8}>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <Typography
-                  alignContent="center"
-                  variant="subtitle1"
-                  fontSize={14}
-                  color={green[500]}
-                >
-                  Cơ quan ban hành*
-                </Typography>
-                <Typography alignContent="center" fontSize={14} color={grey[500]}>
-                  (chọn 1 hoặc nhiều cơ quan ban hành)
-                </Typography>
-              </div>
-
-              <Grid
-                container
-                paddingX={2}
-                marginTop={1}
-                border={1}
-                borderRadius={1}
-                borderColor={grey[300]}
-                minHeight={100}
-                maxHeight={300}
-                overflow="auto"
-              >
-                {agencyFields.map((field, index) => (
-                  <Grid item xs={12} key={index}>
-                    <FormControlLabel control={<Checkbox />} label={field.name} />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-
-            <Grid item xs={4}>
-              <Typography
-                alignContent="center"
-                variant="subtitle1"
-                fontSize={14}
-                color={green[500]}
-              >
-                Loại văn bản*
-              </Typography>
-              <StyledList>
-                {documentTypes.map((type) => (
-                  <ListItem key={type} disablePadding>
-                    <ListItemButton
-                      classes={{ color: 'rgb(1, 202, 202)' }}
-                      selected={formData.documentType === type}
-                      onClick={() => handleListItemClick(type)}
-                    >
-                      <ListItemText primary={type.name} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </StyledList>
-            </Grid>
-          </Grid>
-
+          <DocumentDetails
+            documentCode={formData.documentCode}
+            issueDate={formData.issueDate}
+            effecteddate={formData.effecteddate}
+            handleInputChange={handleInputChange}
+          />
+          <AgencySelector
+            agencyFields={agencyFields}
+            agencyIDs={formData.agencyids}
+            handleAgencyChange={handleAgencyChange}
+          />
           <Grid container spacing={2} mt={2}>
             <Grid item xs={6}>
+              <Typography alignContent="center" fontSize={14} color={grey[500]}>
+                Người ký văn bản
+              </Typography>
               <FormControl fullWidth>
-                <TextField id="outlined-basic" label="Người ký văn bản" variant="outlined" />
+                <TextField
+                  id="outlined-basic"
+                  variant="outlined"
+                  value={formData.signer}
+                  onChange={(e) => handleInputChange('signer', e.target.value)}
+                />
               </FormControl>
             </Grid>
             <Grid item xs={6}>
+              <Typography alignContent="center" fontSize={14} color={grey[500]}>
+                Chức vụ
+              </Typography>
               <FormControl fullWidth>
-                <TextField id="outlined-basic" label="Chức vụ" variant="outlined" />
+                <TextField
+                  id="outlined-basic"
+                  variant="outlined"
+                  value={formData.signerposition}
+                  onChange={(e) => handleInputChange('signerposition', e.target.value)}
+                />
               </FormControl>
             </Grid>
           </Grid>
@@ -233,13 +554,19 @@ const DocumentForm = () => {
           <Grid container spacing={2} mt={2}>
             <Grid item xs={12}>
               <FormLabel>Trích yếu</FormLabel>
-              <TextField fullWidth multiline rows={5} />
+              <TextField
+                fullWidth
+                multiline
+                rows={5}
+                value={formData.abstract}
+                onChange={(e) => handleInputChange('abstract', e.target.value)}
+              />
             </Grid>
           </Grid>
 
           <Grid container spacing={2} mt={2} paddingX={2}>
             <Stack spacing={{ xs: 1, sm: 2 }} direction="row" useFlexGap flexWrap="wrap">
-              <Button variant="contained" color="success" onClick={() => {}}>
+              <Button variant="contained" color="success" onClick={handleCreateDocument}>
                 Chấp nhận
               </Button>
               <Button variant="contained" color="inherit">
@@ -250,95 +577,18 @@ const DocumentForm = () => {
         </Grid>
 
         <Grid item xs={6}>
-          <Grid container>
-            <Grid item>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <Typography
-                  alignContent="center"
-                  variant="subtitle1"
-                  fontSize={14}
-                  color={green[500]}
-                >
-                  Lĩnh vực*
-                </Typography>
-                <Typography alignContent="center" fontSize={14} color={grey[500]}>
-                  (chọn 1 hoặc nhiều lĩnh vực)
-                </Typography>
-              </div>
-            </Grid>
-            <Grid
-              container
-              paddingX={2}
-              border={1}
-              marginTop={1}
-              borderRadius={1}
-              borderColor={grey[300]}
-              minHeight={100}
-              maxHeight={300}
-              overflow="auto"
-            >
-              {categoryFields.map((field, index) => (
-                <Grid item xs={4} key={index}>
-                  <FormControlLabel control={<Checkbox />} label={field.name} />
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-
-          <Grid container marginTop={4} gap={2}>
-            <div style={{ flex: 2, flexDirection: 'column' }}>
-              <div
-                style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px' }}
-              >
-                <Typography variant="subtitle1" gutterBottom>
-                  File văn bản
-                </Typography>
-                <Typography variant="subtitle1" gutterBottom>
-                  Tổng số trang: {countPage}
-                </Typography>
-              </div>
-              <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
-                <Table stickyHeader>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>#</TableCell>
-                      <TableCell>Tên file</TableCell>
-                      <TableCell>Loại file</TableCell>
-                      <TableCell>Số trang</TableCell>
-                      <TableCell> </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>1</TableCell>
-                      <TableCell>Document 1</TableCell>
-                      <TableCell>PDF</TableCell>
-                      <TableCell>12</TableCell>
-                      <TableCell>
-                        <IconButton variant="text" color="error">
-                          <ClearOutlinedIcon />
-                        </IconButton>
-                        <IconButton variant="text" color="info">
-                          <UnfoldMoreOutlinedIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Stack direction="row" spacing={2} marginTop={2}>
-                <Button variant="contained" color="success">
-                  Chọn file
-                </Button>
-                <Button variant="contained" color="success">
-                  Xem nội dung file
-                </Button>
-              </Stack>
-            </div>
-          </Grid>
+          <Categories onCategoriesChange={handleCategoryChange} />
+          <FileUpload selectedFiles={selectedFiles} handleOpen={handleOpen} totalPage={totalPage} />
         </Grid>
       </Grid>
+
+      <FileUploadModal
+        open={isModalOpen}
+        handleClose={handleClose}
+        onCloseWithSelectedFiles={handleCloseWithSelectedFiles}
+      />
     </div>
   );
 };
+
 export default DocumentForm;
