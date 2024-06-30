@@ -5,7 +5,7 @@ import { grey } from '@mui/material/colors';
 import { Grid, TextField, Typography } from '@mui/material';
 
 const DocumentDetails = React.memo(
-  ({ documentCode, issueDate, effecteddate, handleInputChange }) => (
+  ({ documentCode, issueddate, effecteddate, handleInputChange }) => (
     <Grid container spacing={2}>
       <Grid item xs={4}>
         <Typography alignContent="center" fontSize={14} color={grey[500]}>
@@ -30,8 +30,8 @@ const DocumentDetails = React.memo(
             type="date"
             InputLabelProps={{ shrink: true }}
             fullWidth
-            value={issueDate}
-            onChange={(e) => handleInputChange('issueDate', e.target.value)}
+            value={issueddate}
+            onChange={(e) => handleInputChange('issueddate', e.target.value)}
           />
         </Grid>
       </Grid>
@@ -57,7 +57,7 @@ const DocumentDetails = React.memo(
 
 DocumentDetails.propTypes = {
   documentCode: PropTypes.string.isRequired,
-  issueDate: PropTypes.string.isRequired,
+  issueddate: PropTypes.string.isRequired,
   effecteddate: PropTypes.string.isRequired,
   handleInputChange: PropTypes.func.isRequired,
 };

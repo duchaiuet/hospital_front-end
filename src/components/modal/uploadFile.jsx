@@ -107,13 +107,13 @@ const FileUploadModal = ({ open, handleClose, onCloseWithSelectedFiles }) => {
   };
 
   const handleCheckboxChange = (file) => {
-    console.log('file: ', file);
     setSelectedFiles((prevSelected) =>
-      prevSelected.includes(file)
-        ? prevSelected.filter((id) => id !== file.id)
+      prevSelected.some((fileSelect) => fileSelect.id === file.id)
+        ? prevSelected.filter((fileSelect) => fileSelect.id !== file.id)
         : [...prevSelected, file]
     );
   };
+
   useEffect(() => {
     if (tabValue === 1) {
       fetchDocumentsList(1, 10);

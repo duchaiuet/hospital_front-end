@@ -14,6 +14,16 @@ const StyledList = styled(List)({
   marginTop: '8px',
 });
 
+const StyledListItemButton = styled(ListItemButton)(({ theme, selected }) => ({
+  ...(selected && {
+    backgroundColor: theme.palette.action.selected,
+    color: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover,
+    },
+  }),
+}));
+
 const DocumentTypeSelector = ({ documentTypes, selectedDocTypeId, onDocTypeChange }) => (
   <Grid item xs={4}>
     <Typography alignContent="center" variant="subtitle1" fontSize={14} color={green[500]}>
@@ -22,12 +32,12 @@ const DocumentTypeSelector = ({ documentTypes, selectedDocTypeId, onDocTypeChang
     <StyledList>
       {documentTypes.map((type) => (
         <ListItem key={type.id} disablePadding>
-          <ListItemButton
+          <StyledListItemButton
             selected={selectedDocTypeId === type.id}
             onClick={() => onDocTypeChange(type.id)}
           >
             <ListItemText primary={type.name} />
-          </ListItemButton>
+          </StyledListItemButton>
         </ListItem>
       ))}
     </StyledList>
@@ -41,7 +51,7 @@ DocumentTypeSelector.propTypes = {
       name: PropTypes.string.isRequired,
     })
   ).isRequired,
-  selectedDocTypeId: PropTypes.number.isRequired,
+  selectedDocTypeId: PropTypes.number,
   onDocTypeChange: PropTypes.func.isRequired,
 };
 

@@ -77,27 +77,6 @@
 //   const [agencyIDs, setAgencyIDs] = useState([]);
 //   const [totalPage, setTotalPage] = useState(0);
 
-//   // const handleSwapUp = (index) => {
-//   //   if (index > 0) {
-//   //     const newFiles = [...selectedFiles];
-//   //     [newFiles[index - 1], newFiles[index]] = [newFiles[index], newFiles[index - 1]];
-//   //     setSelectedFiles(newFiles);
-//   //   }
-//   // };
-
-//   // const handleSwapDown = (index) => {
-//   //   if (index < formData.files.length - 1) {
-//   //     const newFiles = [...selectedFiles];
-//   //     [newFiles[index + 1], newFiles[index]] = [newFiles[index], newFiles[index + 1]];
-//   //     setSelectedFiles(newFiles);
-//   //   }
-//   // };
-
-//   // const handleRemoveFile = (index) => {
-//   //   const newFiles = formData.files.filter((_, i) => i !== index);
-//   //   setFormData((prevData) => ({ ...prevData, files: newFiles }));
-//   // };
-
 //   const handleCloseWithSelectedFiles = (files) => {
 //     const countPage = files.reduce((total, file) => total + (file.pagecount || 0), 0);
 
@@ -426,12 +405,22 @@
 import React, { useState, useEffect } from 'react';
 
 import { grey } from '@mui/material/colors';
-import { Grid, Stack, Button, TextField, FormLabel, Typography, FormControl } from '@mui/material';
+import {
+  Box,
+  Grid,
+  Stack,
+  Button,
+  TextField,
+  FormLabel,
+  Typography,
+  FormControl,
+} from '@mui/material';
 
 import Categories from './category';
 import FileUpload from './fileUpload';
 import AgencySelector from './agency';
 import DocumentDetails from './documentDetail';
+import DocumentTypeSelector from './documentType';
 import { fetchAgencies } from '../../api/agencies';
 import { createDocument } from '../../api/document';
 import { fetchDocClasses } from '../../api/docclass';
@@ -440,9 +429,9 @@ import FileUploadModal from '../../components/modal/uploadFile';
 const DocumentForm = () => {
   const [formData, setFormData] = useState({
     documentCode: '',
-    issueDate: '',
+    issueddate: '',
     effecteddate: '',
-    doctypeid: '',
+    doctypeid: null,
     signer: '',
     signerposition: '',
     files: [],
@@ -457,7 +446,6 @@ const DocumentForm = () => {
   const handleClose = () => setIsModalOpen(false);
   const [documentTypes, setDocumentTypes] = useState([]);
   const [agencyFields, setAgencyFields] = useState([]);
-  const [selectedFiles, setSelectedFiles] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
 
   const handleInputChange = (key, value) => {
@@ -467,7 +455,9 @@ const DocumentForm = () => {
   const handleCloseWithSelectedFiles = (files) => {
     const countPage = files.reduce((total, file) => total + (file.pagecount || 0), 0);
     setTotalPage(countPage);
-    setSelectedFiles(files);
+
+    setFormData((prevData) => ({ ...prevData, files }));
+
     handleClose();
   };
 
@@ -486,9 +476,17 @@ const DocumentForm = () => {
     await createDocument(formData);
   };
 
+  const handleDocTypeChange = (id) => {
+    setFormData((prevData) => ({ ...prevData, doctypeid: Number(id) }));
+  };
+
   const fetchDataDocumentType = async () => {
     const data = await fetchDocClasses();
     setDocumentTypes(data);
+  };
+
+  const handleFilesUpdate = (updatedFiles) => {
+    setFormData((prevData) => ({ ...prevData, files: updatedFiles }));
   };
 
   const fetchDataAgency = async () => {
@@ -513,15 +511,23 @@ const DocumentForm = () => {
         <Grid item xs={6}>
           <DocumentDetails
             documentCode={formData.documentCode}
-            issueDate={formData.issueDate}
+            issueddate={formData.issueddate}
             effecteddate={formData.effecteddate}
             handleInputChange={handleInputChange}
           />
-          <AgencySelector
-            agencyFields={agencyFields}
-            agencyIDs={formData.agencyids}
-            handleAgencyChange={handleAgencyChange}
-          />
+          <Box sx={{ display: 'flex', flexDirection: 'row' }} gap={3} mt={2}>
+            <AgencySelector
+              agencyFields={agencyFields}
+              agencyIDs={formData.agencyids}
+              handleAgencyChange={handleAgencyChange}
+            />
+            <DocumentTypeSelector
+              documentTypes={documentTypes}
+              selectedDocTypeId={Number(formData.doctypeid)}
+              onDocTypeChange={handleDocTypeChange}
+            />
+          </Box>
+
           <Grid container spacing={2} mt={2}>
             <Grid item xs={6}>
               <Typography alignContent="center" fontSize={14} color={grey[500]}>
@@ -578,7 +584,13 @@ const DocumentForm = () => {
 
         <Grid item xs={6}>
           <Categories onCategoriesChange={handleCategoryChange} />
-          <FileUpload selectedFiles={selectedFiles} handleOpen={handleOpen} totalPage={totalPage} />
+
+          <FileUpload
+            selectedFiles={formData.files}
+            handleOpen={handleOpen}
+            totalPage={totalPage}
+            onFilesUpdate={handleFilesUpdate}
+          />
         </Grid>
       </Grid>
 
