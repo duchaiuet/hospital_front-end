@@ -62,4 +62,4 @@ DocumentDetails.propTypes = {
   handleInputChange: PropTypes.func.isRequired,
 };
 
-export default DocumentDetails;
+export default React.memo(DocumentDetails);

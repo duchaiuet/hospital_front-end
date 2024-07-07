@@ -1,3 +1,5 @@
+import ArticleIcon from '@mui/icons-material/Article';
+
 import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -11,6 +13,11 @@ const navConfig = [
     title: 'dashboard',
     path: '/',
     icon: icon('ic_analytics'),
+  },
+  {
+    title: 'Công báo',
+    path: '/document-list',
+    icon: <ArticleIcon />,
   },
   {
     title: 'user',
@@ -27,7 +34,6 @@ const navConfig = [
     path: '/blog',
     icon: icon('ic_blog'),
   },
-  
 ];
 
 export default navConfig;

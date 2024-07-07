@@ -1,4 +1,4 @@
-export const fetchDocuments = async (page, pageSize) => {
+export const fetchFiles = async (page, pageSize) => {
   try {
     const url = new URL(
       `${process.env.REACT_APP_BASE_URL}/document-detail?page=${page}&pageSize=${pageSize}`

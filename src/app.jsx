@@ -7,7 +7,9 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import ThemeProvider from 'src/theme';
 import PropTypes from 'prop-types'; // Import PropTypes
 import { lazy, Suspense } from 'react';
+import { ToastContainer } from 'react-toastify';
 import DashboardLayout from './layouts/dashboard';
+import 'react-toastify/dist/ReactToastify.css';
 // ----------------------------------------------------------------------
 
 export const IndexPage = lazy(() => import('src/pages/app'));
@@ -16,7 +18,8 @@ export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
-
+export const DocumentPage = lazy(() => import('src/pages/document'));
+export const DocumentListPage = lazy(() => import('src/pages/documentList'));
 
 PrivateRoute.propTypes = {
   children: PropTypes.node.isRequired, // Defining prop types for children
@@ -42,60 +45,82 @@ export default function App() {
   useScrollToTop();
 
   return (
-    <ThemeProvider>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <DashboardLayout>
-                <IndexPage/>
-              </DashboardLayout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/user"
-          element={
-            <PrivateRoute>
-              <DashboardLayout>
-                <Suspense>
-                  <UserPage/>
-                </Suspense>
-              </DashboardLayout>
-              
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/products"
-          element={
-            <PrivateRoute>
-              <DashboardLayout>
-                <Suspense>
-                  <ProductsPage/>
-                </Suspense>
-              </DashboardLayout>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              <LoginPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/*"
-          element={
-            <PublicRoute>
-              <Page404 />
-            </PublicRoute>
-          }
-        />
-      </Routes>
-    </ThemeProvider>
+    <div>
+      <ToastContainer />
+      <ThemeProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <IndexPage />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/document"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <DocumentPage />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/document-list"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <DocumentListPage />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <UserPage />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/products"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Suspense>
+                    <ProductsPage />
+                  </Suspense>
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/*"
+            element={
+              <PublicRoute>
+                <Page404 />
+              </PublicRoute>
+            }
+          />
+        </Routes>
+      </ThemeProvider>
+    </div>
   );
 }

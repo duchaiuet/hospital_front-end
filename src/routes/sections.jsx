@@ -10,6 +10,7 @@ export const UserPage = lazy(() => import('src/pages/user'));
 export const LoginPage = lazy(() => import('src/pages/login'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const DocumentPage = lazy(() => import('src/pages/document'));
+export const DocumentListPage = lazy(() => import('src/pages/documentList'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 
 // ----------------------------------------------------------------------
@@ -29,37 +30,6 @@ PublicRoute.propTypes = {
   children: PropTypes.node.isRequired, // Defining prop types for children
 };
 export default function Router() {
-  // const routes = useRoutes([
-  //   {
-  //     element: (
-  //       <DashboardLayout>
-  //         <Suspense>
-  //           <Outlet />
-  //         </Suspense>
-  //       </DashboardLayout>
-  //     ),
-  //     children: [
-  //       { element: <IndexPage />, index: true },
-  //       { path: 'user', element: <UserPage /> },
-  //       { path: 'products', element: <ProductsPage /> },
-  //       { path: 'blog', element: <BlogPage /> },
-  //     ],
-  //   },
-  //   {
-  //     path: 'login',
-  //     element: <LoginPage />,
-  //   },
-  //   {
-  //     path: '404',
-  //     element: <Page404 />,
-  //   },
-  //   {
-  //     path: '*',
-  //     element: <Navigate to="/404" replace />,
-  //   },
-  // ]);
-
-  // return routes;
   <Routes>
     <Route
       path="/"

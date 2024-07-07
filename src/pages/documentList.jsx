@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { AppView } from 'src/sections/overview/view';
+import DocumentList from 'src/sections/document/documentList';
 
 // ----------------------------------------------------------------------
 
-export default function AppPage() {
+export default function DocumentPage() {
   return (
     <>
       <Helmet>
-        <title> Document</title>
+        <title> Document List</title>
       </Helmet>
 
-      <AppView />
+      <DocumentList />
     </>
   );
 }

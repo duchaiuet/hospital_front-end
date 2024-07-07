@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 
 import { grey, green } from '@mui/material/colors';
-import { Grid, Checkbox, Typography, FormControlLabel } from '@mui/material';
+import { Box, Checkbox, Typography, FormControlLabel } from '@mui/material';
 
 import { fetchCategories } from '../../api/categories';
 
@@ -32,8 +32,8 @@ const Categories = ({ onCategoriesChange }) => {
   };
 
   return (
-    <Grid container>
-      <Grid item>
+    <Box container mt={2}>
+      <Box item>
         <div style={{ display: 'flex', gap: '10px' }}>
           <Typography alignContent="center" variant="subtitle1" fontSize={14} color={green[500]}>
             Lĩnh vực*
@@ -42,21 +42,20 @@ const Categories = ({ onCategoriesChange }) => {
             (chọn 1 hoặc nhiều lĩnh vực)
           </Typography>
         </div>
-      </Grid>
-      <Grid
+      </Box>
+      <Box
         container
         paddingX={2}
         border={1}
         marginTop={1}
         borderRadius={1}
         borderColor={grey[300]}
-        minHeight={100}
         maxHeight={420}
         overflow="auto"
       >
         {categoryFields &&
-          categoryFields.map((field, index) => (
-            <Grid item xs={4} key={field.id}>
+          categoryFields.map((field) => (
+            <Box key={field.id}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -66,10 +65,10 @@ const Categories = ({ onCategoriesChange }) => {
                 }
                 label={field.name}
               />
-            </Grid>
+            </Box>
           ))}
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 };
 

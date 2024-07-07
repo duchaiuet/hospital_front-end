@@ -19,7 +19,7 @@ import {
   TableContainer,
 } from '@mui/material';
 
-import { fetchDocuments } from '../../api/docfile';
+import { fetchFiles } from '../../api/docfile';
 
 const style = {
   top: '50%',
@@ -97,7 +97,7 @@ const FileUploadModal = ({ open, handleClose, onCloseWithSelectedFiles }) => {
 
   const fetchDocumentsList = async (page, pageSize) => {
     try {
-      const result = await fetchDocuments(page, pageSize);
+      const result = await fetchFiles(page, pageSize);
       setFiles(result.data);
       setLoading(false);
     } catch (e) {

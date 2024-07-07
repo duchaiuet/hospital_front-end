@@ -7,11 +7,16 @@ import { Grid, Checkbox, Typography, FormControlLabel } from '@mui/material';
 const AgencySelector = React.memo(({ agencyFields, agencyIDs, handleAgencyChange }) => (
   <Grid item xs={8}>
     <div style={{ display: 'flex', gap: '10px' }}>
-      <Typography alignContent="center" variant="subtitle1" fontSize={14} color={green[500]}>
-        Cơ quan ban hành*
-      </Typography>
-      <Typography alignContent="center" fontSize={14} color={grey[500]}>
-        (chọn 1 hoặc nhiều cơ quan ban hành)
+      <Typography
+        flex={1}
+        flexDirection="row"
+        alignContent="center"
+        variant="subtitle1"
+        fontSize={14}
+        color={green[500]}
+      >
+        Cơ quan ban hành*{' '}
+        <span style={{ color: 'GrayText' }}>(chọn 1 hoặc nhiều cơ quan ban hành)</span>
       </Typography>
     </div>
 

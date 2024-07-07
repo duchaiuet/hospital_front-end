@@ -36,7 +36,7 @@ const DocumentTypeSelector = ({ documentTypes, selectedDocTypeId, onDocTypeChang
             selected={selectedDocTypeId === type.id}
             onClick={() => onDocTypeChange(type.id)}
           >
-            <ListItemText primary={type.name} />
+            <ListItemText primary={`${type.name}/${type.code}`} />
           </StyledListItemButton>
         </ListItem>
       ))}
