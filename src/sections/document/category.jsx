@@ -8,7 +8,7 @@ import { fetchCategories } from '../../api/categories';
 
 // ----------------------------------------------------------------------
 
-const Categories = ({ onCategoriesChange }) => {
+const Categories = ({ categoriesids, onCategoriesChange }) => {
   const [categoryIDs, setCategoryIDs] = useState([]);
   const [categoryFields, setCategoryFields] = useState([]);
 
@@ -22,13 +22,15 @@ const Categories = ({ onCategoriesChange }) => {
   };
 
   useEffect(() => {
-    onCategoriesChange(categoryIDs);
-  }, [categoryIDs, onCategoriesChange]);
+    setCategoryIDs(categoriesids);
+  }, [categoriesids]);
 
   const handleCategoryChange = (event, fieldId) => {
-    setCategoryIDs((prevIDs) =>
-      event.target.checked ? [...prevIDs, fieldId] : prevIDs.filter((id) => id !== fieldId)
-    );
+    const newCategoryIds = event.target.checked
+      ? [...categoryIDs, fieldId]
+      : categoryIDs.filter((id) => id !== fieldId);
+    setCategoryIDs(newCategoryIds);
+    onCategoriesChange(newCategoryIds);
   };
 
   return (
@@ -73,6 +75,7 @@ const Categories = ({ onCategoriesChange }) => {
 };
 
 Categories.propTypes = {
+  categoriesids: PropTypes.array.isRequired,
   onCategoriesChange: PropTypes.func.isRequired,
 };
 

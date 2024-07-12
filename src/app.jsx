@@ -72,6 +72,17 @@ export default function App() {
           />
 
           <Route
+            path="/document/:documentId"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <DocumentPage />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
             path="/document-list"
             element={
               <PrivateRoute>

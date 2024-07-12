@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-import DocumentForm from 'src/sections/document/form';
+import DocumentForm from 'src/sections/document/documentForm';
 
 // ----------------------------------------------------------------------
 

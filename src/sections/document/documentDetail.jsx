@@ -32,6 +32,7 @@ const DocumentDetails = React.memo(
             fullWidth
             value={issueddate}
             onChange={(e) => handleInputChange('issueddate', e.target.value)}
+            placeholder="DD/MM/YYYY "
           />
         </Grid>
       </Grid>

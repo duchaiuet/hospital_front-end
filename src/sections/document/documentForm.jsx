@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+import { useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { grey } from '@mui/material/colors';
@@ -20,11 +21,13 @@ import AgencySelector from './agency';
 import DocumentDetails from './documentDetail';
 import DocumentTypeSelector from './documentType';
 import { fetchAgencies } from '../../api/agencies';
-import { createDocument } from '../../api/document';
 import { getDocumentTypes } from '../../api/documentType';
 import FileUploadModal from '../../components/modal/uploadFile';
+import { createDocument, updateDocument, getDocumentById } from '../../api/document';
 
 const DocumentForm = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     documentCode: '',
     issueddate: '',
@@ -76,15 +79,32 @@ const DocumentForm = () => {
       setIsLoading(true);
       const result = await createDocument(formData);
 
-      if (result) {
-        toast.success('Document created successfully', result);
+      if (result.statusCode === 200) {
+        toast.success(result?.message);
       } else {
-        toast.error('Failed to create document');
+        toast.error(result?.message[0]);
       }
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      toast.error('Failed to create document');
+      toast.error('Tạo văn bản thất bại');
+    }
+  };
+
+  const handleEditDocument = async () => {
+    try {
+      setIsLoading(true);
+      const result = await updateDocument(documentId, formData);
+      if (result.statusCode === 200) {
+        toast.success(result?.message);
+        fetchDataDocument(documentId);
+      } else {
+        toast.error(result?.message[0]);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      toast.error('Tạo văn bản thất bại');
     }
   };
 
@@ -102,6 +122,41 @@ const DocumentForm = () => {
     setDocumentTypes(docTypes);
     setAgencyFields(agencies);
   }, []);
+
+  const { documentId } = useParams();
+
+  const fetchDataDocument = useCallback(
+    async (id) => {
+      if (!Number(id)) {
+        navigate('/document');
+        return;
+      }
+
+      const infor = await getDocumentById(id);
+      if (!infor) {
+        navigate('/document');
+        return;
+      }
+      setFormData({
+        documentCode: infor.code,
+        issueddate: new Date(infor.issueddate).toISOString().split('T')[0],
+        effecteddate: new Date(infor.effecteddate).toISOString().split('T')[0],
+        doctypeid: infor.doctypeid,
+        signer: infor.signer,
+        signerposition: infor.signerposition,
+        files: infor.documentFiles,
+        pagecount: infor.pagecount,
+        agencyids: infor.agencyids,
+        categoryids: infor.categoryids,
+        abstract: infor.abstract,
+      });
+    },
+    [navigate]
+  );
+
+  useEffect(() => {
+    fetchDataDocument(documentId);
+  }, [documentId, fetchDataDocument]);
 
   useEffect(() => {
     fetchData();
@@ -132,7 +187,6 @@ const DocumentForm = () => {
               onDocTypeChange={handleDocTypeChange}
             />
           </Box>
-
           <Grid container spacing={2} mt={2}>
             <Grid item xs={6}>
               <Typography alignContent="center" fontSize={14} color={grey[500]}>
@@ -161,7 +215,6 @@ const DocumentForm = () => {
               </FormControl>
             </Grid>
           </Grid>
-
           <Grid container spacing={2} mt={2}>
             <Grid item xs={12}>
               <FormLabel>Trích yếu</FormLabel>
@@ -174,7 +227,6 @@ const DocumentForm = () => {
               />
             </Grid>
           </Grid>
-
           <Grid container spacing={2} mt={2} paddingX={2}>
             <Stack spacing={{ xs: 1, sm: 2 }} direction="row" useFlexGap flexWrap="wrap">
               <Button
@@ -182,7 +234,7 @@ const DocumentForm = () => {
                 variant="contained"
                 color="success"
                 sx={{ width: '105px' }}
-                onClick={handleCreateDocument}
+                onClick={documentId ? handleEditDocument : handleCreateDocument}
               >
                 {isLoading ? <CircularProgress size={20} color="inherit" /> : 'Chấp nhận'}
               </Button>
@@ -201,7 +253,10 @@ const DocumentForm = () => {
             onFilesUpdate={handleFilesUpdate}
           />
 
-          <Categories onCategoriesChange={handleCategoryChange} />
+          <Categories
+            categoriesids={formData.categoryids}
+            onCategoriesChange={handleCategoryChange}
+          />
         </Grid>
       </Grid>
 
