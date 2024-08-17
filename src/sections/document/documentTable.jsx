@@ -29,7 +29,6 @@ import {
   InputLabel,
   FormControl,
   TableContainer,
-  TablePagination,
 } from '@mui/material';
 
 import { convertToDDMMYYYY } from 'src/utils/format-time';
@@ -41,22 +40,14 @@ import { getDocuments, deleteDocument } from 'src/api/document';
 import ModalConfirm from 'src/components/modal/modalConfirm';
 
 function DocumentTable() {
-  const [open, setOpen] = useState({});
-  const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [documents, setDocuments] = useState([
-    {
-      type: 'VĂN BẢN QUY PHẠM PHÁP LUẬT',
-      name: 'HỘI ĐỒNG NHÂN DÂN TỈNH QUẢNG TRỊ',
-      docs: [],
-    },
-    {
-      type: 'VĂN BẢN KHÁC',
-      name: 'ỦY BAN NHÂN DÂN TỈNH QUẢNG TRỊ',
-      docs: [],
-    },
-  ]);
+  const [openLegal, setOpenLegal] = useState(false);
+  const [openOther, setOpenOther] = useState(false);
+  const [openLegalItem, setOpenLegalItem] = useState(new Set());
+  const [openOtherItem, setOpenOtherItem] = useState(new Set());
+  const [openLegalFile, setOpenlegalFile] = useState({});
+  const [openOtherFile, setOpenOtherFile] = useState({});
+
+  const [documents, setDocuments] = useState([]);
 
   const menuProps = {
     PaperProps: {
@@ -96,8 +87,8 @@ function DocumentTable() {
 
   const fetchData = useCallback(
     async (
-      pageParam = page,
-      rowsPerPageParam = rowsPerPage,
+      pageParam = 1,
+      rowsPerPageParam = 10,
       documentClassParam = '',
       documentAgencyParam = '',
       issueDateFromParam = '',
@@ -113,84 +104,11 @@ function DocumentTable() {
         documentAgencyParam,
         documentClassParam
       );
-
-      const newDocuments = [
-        {
-          type: 'VĂN BẢN QUY PHẠM PHÁP LUẬT',
-          name: 'HỘI ĐỒNG NHÂN DÂN TỈNH QUẢNG TRỊ',
-          docs: [],
-        },
-        {
-          type: 'VĂN BẢN KHÁC',
-          name: 'ỦY BAN NHÂN DÂN TỈNH QUẢNG TRỊ',
-          docs: [],
-        },
-      ];
-
-      documentRes?.data?.forEach((doc) => {
-        const hasSpecialFile = /^\d{2}\/\d{4}\/.+$/.test(doc.code);
-
-        let type = 'VĂN BẢN KHÁC';
-        if (hasSpecialFile) {
-          type = 'VĂN BẢN QUY PHẠM PHÁP LUẬT';
-        }
-
-        const sectionIndex = newDocuments.findIndex((section) => section.type === type);
-        if (sectionIndex !== -1) {
-          newDocuments[sectionIndex].docs.push({
-            id: doc.id,
-            title: doc.code,
-            issueddate: doc.issueddate,
-            abstract: doc.abstract,
-            pages: doc.pagecount,
-            documentFiles: doc.documentFiles.map((file) => ({
-              id: file.id,
-              title: file.name,
-              pages: file.pagecount,
-            })),
-          });
-        } else {
-          newDocuments.push({
-            type,
-            name:
-              type === 'VĂN BẢN QUY PHẠM PHÁP LUẬT'
-                ? 'HỘI ĐỒNG NHÂN DÂN TỈNH QUẢNG TRỊ'
-                : 'ỦY BAN NHÂN DÂN TỈNH QUẢNG TRỊ',
-            docs: [
-              {
-                id: doc.id,
-                title: doc.code,
-                issueddate: doc.issueddate,
-                abstract: doc.abstract,
-                pages: doc.pagecount,
-                documentFiles: doc.documentFiles.map((file) => ({
-                  id: file.id,
-                  title: file.name,
-                  pages: file.pagecount,
-                })),
-              },
-            ],
-          });
-        }
-      });
-      setDocuments(newDocuments);
-      setCount(documentRes?.total || 0);
+      setDocuments(documentRes?.data || []);
+      console.log(documentRes?.data);
     },
-    [page, rowsPerPage]
+    []
   );
-
-  const handleClick = (id) => {
-    setOpen((prevState) => ({ ...prevState, [id]: !prevState[id] }));
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const handleClear = useCallback(() => {
     setDocumentClass('');
@@ -208,14 +126,13 @@ function DocumentTable() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
   return (
     <>
       <Box sx={{ display: 'flex', my: 2, spacing: 2 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
-              value={keyword}
+              value={keyword || ''}
               onChange={(e) => setKeyword(e.target.value)}
               fullWidth
               label="Số, ký hiệu văn bản, Trích yếu"
@@ -225,7 +142,7 @@ function DocumentTable() {
           <Grid item xs={12} sm={3}>
             <TextField
               fullWidth
-              value={issueDateFrom}
+              value={issueDateFrom || ''}
               onChange={(e) => {
                 setIssueDateFrom(e.target.value);
               }}
@@ -238,7 +155,7 @@ function DocumentTable() {
           <Grid item xs={12} sm={3}>
             <TextField
               fullWidth
-              value={issueDateTo}
+              value={issueDateTo || ''}
               onChange={(e) => {
                 setIssueDateTo(e.target.value);
               }}
@@ -287,15 +204,7 @@ function DocumentTable() {
           <IconButton
             color="primary"
             onClick={() => {
-              fetchData(
-                page,
-                rowsPerPage,
-                documentClass,
-                documentAgency,
-                issueDateFrom,
-                issueDateTo,
-                keyword
-              );
+              fetchData(0, 10, documentClass, documentAgency, issueDateFrom, issueDateTo, keyword);
             }}
           >
             <Search />
@@ -312,7 +221,7 @@ function DocumentTable() {
         </Box>
       </Box>
       <Paper>
-        <TableContainer style={{ maxHeight: '500px' }}>
+        <TableContainer>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -324,89 +233,244 @@ function DocumentTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {documents.flatMap((section, index) => (
-                <React.Fragment key={index}>
-                  <TableRow>
-                    <TableCell colSpan={5}>
-                      <strong>{section.type}</strong> - {section.name}
-                    </TableCell>
-                  </TableRow>
-                  {section.docs.map((doc) => (
-                    <React.Fragment key={doc.id}>
+              <TableRow>
+                <TableCell colSpan={12}>
+                  <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => setOpenLegal(!openLegal)}
+                  >
+                    {openLegal ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                  </IconButton>
+                  VĂN BẢN QUY PHẠM PHÁP LUẬT
+                </TableCell>
+              </TableRow>
+              {openLegal ? (
+                <>
+                  {documents?.legal?.map((legal) => (
+                    <React.Fragment key={legal.id}>
                       <TableRow>
-                        <TableCell colSpan={2}>
+                        <TableCell style={{ paddingLeft: '32px' }} colSpan={12}>
                           <IconButton
                             aria-label="expand row"
                             size="small"
-                            onClick={() => handleClick(doc.id)}
+                            onClick={() =>
+                              setOpenLegalItem((prevState) => {
+                                const newState = new Set(prevState);
+                                if (newState.has(legal.agencyName)) {
+                                  newState.delete(legal.agencyName);
+                                } else {
+                                  newState.add(legal.agencyName);
+                                }
+                                return newState;
+                              })
+                            }
                           >
-                            {open[doc.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                            {openLegalItem.has(legal.agencyName) ? (
+                              <KeyboardArrowUp />
+                            ) : (
+                              <KeyboardArrowDown />
+                            )}
                           </IconButton>
-                          {doc.title}
-                        </TableCell>
-                        <TableCell colSpan={2}>{convertToDDMMYYYY(doc.issueddate)}</TableCell>
-                        <TableCell colSpan={4}>{doc.abstract}</TableCell>
-                        <TableCell colSpan={2} align="center">
-                          {doc.pages}
-                        </TableCell>
-                        <TableCell colSpan={2}>
-                          <IconButton
-                            color="primary"
-                            onClick={() => {
-                              handleEditClick(doc.id);
-                            }}
-                          >
-                            <Edit />
-                          </IconButton>
-                          <IconButton
-                            color="secondary"
-                            onClick={() => {
-                              setIsOpenDelete(true);
-                              setDeleteDocumentId(doc.id);
-                            }}
-                          >
-                            <Delete />
-                          </IconButton>
+                          {legal.agencyName}
                         </TableCell>
                       </TableRow>
-                      <TableRow>
-                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
-                          <Collapse in={open[doc.id]} timeout="auto" unmountOnExit>
-                            <Box margin={1}>
-                              <Table size="small" aria-label="related-files">
-                                <TableBody>
-                                  {doc.documentFiles.map((file) => (
-                                    <TableRow key={file.id}>
-                                      <TableCell colSpan={2}>{file.title}</TableCell>
-                                      <TableCell colSpan={2} />
-                                      <TableCell colSpan={4} />
-                                      <TableCell colSpan={2}>{file.pages}</TableCell>
-                                      <TableCell colSpan={2} />
-                                    </TableRow>
-                                  ))}
-                                </TableBody>
-                              </Table>
-                            </Box>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
+                      {openLegalItem.has(legal.agencyName) &&
+                        legal?.documents?.map((doc) => (
+                          <React.Fragment key={doc.id}>
+                            <TableRow>
+                              <TableCell style={{ paddingLeft: '44px' }} colSpan={2}>
+                                <IconButton
+                                  aria-label="expand row"
+                                  size="small"
+                                  onClick={() => {
+                                    setOpenlegalFile((prevState) => ({
+                                      ...prevState,
+                                      [doc.id]: !prevState[doc.id],
+                                    }));
+                                  }}
+                                >
+                                  {openLegalFile[doc.id] ? (
+                                    <KeyboardArrowUp />
+                                  ) : (
+                                    <KeyboardArrowDown />
+                                  )}
+                                </IconButton>
+                                {doc.code}
+                              </TableCell>
+                              <TableCell colSpan={2}>{convertToDDMMYYYY(doc.issueddate)}</TableCell>
+                              <TableCell colSpan={4}>{doc.abstract}</TableCell>
+                              <TableCell colSpan={2} align="center">
+                                {doc.pages}
+                              </TableCell>
+                              <TableCell colSpan={2}>
+                                <IconButton
+                                  color="primary"
+                                  onClick={() => {
+                                    handleEditClick(doc.id);
+                                  }}
+                                >
+                                  <Edit />
+                                </IconButton>
+                                <IconButton
+                                  color="secondary"
+                                  onClick={() => {
+                                    setIsOpenDelete(true);
+                                    setDeleteDocumentId(doc.id);
+                                  }}
+                                >
+                                  <Delete />
+                                </IconButton>
+                              </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell style={{ padding: '0 0 0 40px' }} colSpan={12}>
+                                <Collapse in={openLegalFile[doc.id]} timeout="auto" unmountOnExit>
+                                  <Box margin={1}>
+                                    <Table size="small" aria-label="related-files">
+                                      <TableBody>
+                                        {doc?.documentFiles?.map((file) => (
+                                          <TableRow key={file.id}>
+                                            <TableCell colSpan={2}>{file.name}</TableCell>
+                                            <TableCell colSpan={2} />
+                                            <TableCell colSpan={4} />
+                                            <TableCell colSpan={2} align="center">
+                                              {file.pagecount}
+                                            </TableCell>
+                                            <TableCell colSpan={2} />
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                  </Box>
+                                </Collapse>
+                              </TableCell>
+                            </TableRow>
+                          </React.Fragment>
+                        ))}
                     </React.Fragment>
                   ))}
-                </React.Fragment>
-              ))}
+                </>
+              ) : null}
+
+              <TableRow>
+                <TableCell>
+                  <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => setOpenOther(!openOther)}
+                  >
+                    {openOther ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                  </IconButton>
+                  VĂN BẢN QUY KHÁC
+                </TableCell>
+              </TableRow>
+              {openOther ? (
+                <>
+                  {documents?.other?.map((other) => (
+                    <React.Fragment key={other.id}>
+                      <TableRow>
+                        <TableCell style={{ paddingLeft: '32px' }} colSpan={12}>
+                          <IconButton
+                            aria-label="expand row"
+                            size="small"
+                            onClick={() => {
+                              setOpenOtherItem((prevState) => {
+                                const newState = new Set(prevState);
+                                if (newState.has(other.agencyName)) {
+                                  newState.delete(other.agencyName);
+                                } else {
+                                  newState.add(other.agencyName);
+                                }
+                                return newState;
+                              });
+                            }}
+                          >
+                            {openOtherItem.has(other.agencyName) ? (
+                              <KeyboardArrowUp />
+                            ) : (
+                              <KeyboardArrowDown />
+                            )}
+                          </IconButton>
+                          {other.agencyName}
+                        </TableCell>
+                      </TableRow>
+
+                      {openOtherItem.has(other.agencyName) &&
+                        other?.documents?.map((doc) => (
+                          <React.Fragment key={doc.id}>
+                            <TableRow>
+                              <TableCell style={{ paddingLeft: '44px' }} colSpan={2}>
+                                <IconButton
+                                  aria-label="expand row"
+                                  size="small"
+                                  onClick={() => {
+                                    setOpenOtherFile((prevState) => ({
+                                      ...prevState,
+                                      [doc.id]: !prevState[doc.id],
+                                    }));
+                                  }}
+                                >
+                                  {openOtherFile[doc.id] ? (
+                                    <KeyboardArrowUp />
+                                  ) : (
+                                    <KeyboardArrowDown />
+                                  )}
+                                </IconButton>
+                                {doc.code}
+                              </TableCell>
+                              <TableCell colSpan={2}>{convertToDDMMYYYY(doc.issueddate)}</TableCell>
+                              <TableCell colSpan={4}>{doc.abstract}</TableCell>
+                              <TableCell colSpan={2} align="center">
+                                {doc.pages}
+                              </TableCell>
+                              <TableCell colSpan={2}>
+                                <IconButton
+                                  color="primary"
+                                  onClick={() => {
+                                    handleEditClick(doc.id);
+                                  }}
+                                >
+                                  <Edit />
+                                </IconButton>
+                                <IconButton
+                                  color="secondary"
+                                  onClick={() => {
+                                    setIsOpenDelete(true);
+                                    setDeleteDocumentId(doc.id);
+                                  }}
+                                >
+                                  <Delete />
+                                </IconButton>
+                              </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell style={{ paddingLeft: '32px' }} colSpan={12}>
+                                <Table size="small" aria-label="related-files">
+                                  <TableBody>
+                                    {doc?.documentFiles?.map((file) => (
+                                      <TableRow key={file.id}>
+                                        <TableCell colSpan={3}>{file.name}</TableCell>
+                                        <TableCell colSpan={2} />
+                                        <TableCell colSpan={4} />
+                                        <TableCell colSpan={2}>{file.pagecount}</TableCell>
+                                        <TableCell colSpan={2} />
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                              </TableCell>
+                            </TableRow>
+                          </React.Fragment>
+                        ))}
+                    </React.Fragment>
+                  ))}
+                </>
+              ) : null}
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={count}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage="Số hàng mỗi trang"
-        />
+
         <ModalConfirm
           isOpen={isOpenDelete}
           onClose={() => {
@@ -416,15 +480,7 @@ function DocumentTable() {
             try {
               await deleteDocument(DeleteDocumentId);
               setIsOpenDelete(false);
-              fetchData(
-                page + 1,
-                rowsPerPage,
-                documentClass,
-                documentAgency,
-                issueDateFrom,
-                issueDateTo,
-                keyword
-              );
+              fetchData(0, 10, documentClass, documentAgency, issueDateFrom, issueDateTo, keyword);
             } catch (error) {
               setIsOpenDelete(false);
               toast.error('Xóa văn bản không thành công');

@@ -157,14 +157,9 @@ const FileUploadModal = ({ open, handleClose, onCloseWithSelectedFiles }) => {
                 <Table stickyHeader>
                   <TableHead>
                     <TableRow>
-                      <TableCell>ID</TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Link</TableCell>
-                      <TableCell>Document ID</TableCell>
+                      <TableCell />
+                      <TableCell colSpan={4}>Name</TableCell>
                       <TableCell>File Type</TableCell>
-                      <TableCell>Document No</TableCell>
-                      <TableCell>Gazette ID</TableCell>
-                      <TableCell>Gazette No</TableCell>
                       <TableCell>Page Count</TableCell>
                       <TableCell>Page Start</TableCell>
                       <TableCell>Page End</TableCell>
@@ -179,13 +174,8 @@ const FileUploadModal = ({ open, handleClose, onCloseWithSelectedFiles }) => {
                             onChange={() => handleCheckboxChange(file)}
                           />
                         </TableCell>
-                        <TableCell>{file.name}</TableCell>
-                        <TableCell>{file.link}</TableCell>
-                        <TableCell>{file.documentId}</TableCell>
+                        <TableCell colSpan={4}>{file.name}</TableCell>
                         <TableCell>{file.filetype}</TableCell>
-                        <TableCell>{file.documentno}</TableCell>
-                        <TableCell>{file.gazetteId}</TableCell>
-                        <TableCell>{file.gazetteno}</TableCell>
                         <TableCell>{file.pagecount}</TableCell>
                         <TableCell>{file.pagestart}</TableCell>
                         <TableCell>{file.pageend}</TableCell>

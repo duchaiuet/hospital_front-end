@@ -162,7 +162,7 @@ const DocumentForm = () => {
     fetchData();
   }, [fetchData]);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', margin: '0px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', margin: '0 20px 0 20px' }}>
       <Typography variant="h5" gutterBottom>
         Thông tin văn bản
       </Typography>
@@ -246,17 +246,22 @@ const DocumentForm = () => {
         </Grid>
 
         <Grid item xs={6}>
-          <FileUpload
-            selectedFiles={formData.files}
-            handleOpen={handleOpen}
-            totalPage={totalPage}
-            onFilesUpdate={handleFilesUpdate}
-          />
-
-          <Categories
-            categoriesids={formData.categoryids}
-            onCategoriesChange={handleCategoryChange}
-          />
+          <Grid container>
+            <Grid item xs={12} height="50%">
+              <FileUpload
+                selectedFiles={formData.files}
+                handleOpen={handleOpen}
+                totalPage={totalPage}
+                onFilesUpdate={handleFilesUpdate}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Categories
+                categoriesids={formData.categoryids}
+                onCategoriesChange={handleCategoryChange}
+              />
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
 

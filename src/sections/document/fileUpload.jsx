@@ -56,7 +56,11 @@ const FilePreview = ({ selectedFiles, handleOpen, totalPage, onFilesUpdate }) =>
   };
 
   return (
-    <div>
+    <div
+      style={{
+        height: '50%',
+      }}
+    >
       <div
         style={{
           display: 'flex',
@@ -73,7 +77,7 @@ const FilePreview = ({ selectedFiles, handleOpen, totalPage, onFilesUpdate }) =>
           Tổng số trang: {totalPage}
         </Typography>
       </div>
-      <TableContainer sx={{ height: '40%' }}>
+      <TableContainer sx={{ height: '300px' }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -110,15 +114,15 @@ const FilePreview = ({ selectedFiles, handleOpen, totalPage, onFilesUpdate }) =>
             ))}
           </TableBody>
         </Table>
-        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-          <Button variant="contained" onClick={handleOpen} color="success">
-            Chọn file
-          </Button>
-          <Button variant="contained" color="success">
-            Xem nội dung file
-          </Button>
-        </Box>
       </TableContainer>
+      <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+        <Button variant="contained" onClick={handleOpen} color="success">
+          Chọn file
+        </Button>
+        <Button variant="contained" color="success">
+          Xem nội dung file
+        </Button>
+      </Box>
     </div>
   );
 };

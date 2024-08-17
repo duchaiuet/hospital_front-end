@@ -52,7 +52,7 @@ const Categories = ({ categoriesids, onCategoriesChange }) => {
         marginTop={1}
         borderRadius={1}
         borderColor={grey[300]}
-        maxHeight={420}
+        maxHeight={300}
         overflow="auto"
       >
         {categoryFields &&
