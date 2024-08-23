@@ -135,3 +135,27 @@ export const updateDocument = async (id, documentData) => {
     return null;
   }
 };
+
+export const filterDocument = async (page, pageSize) => {
+  try {
+    const url = new URL(
+      `${process.env.REACT_APP_BASE_URL}/document/filter?page=${page}&pageSize=${pageSize}`
+    );
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        accept: '*/*',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Network response was not ok ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
+};
